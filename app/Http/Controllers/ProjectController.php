@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ActivityLog;
 use App\Models\Project;
 use App\Support\Tenancy\TenantContext;
 use Illuminate\Http\RedirectResponse;
@@ -11,12 +12,18 @@ use Illuminate\View\View;
 
 class ProjectController extends Controller
 {
-    public function index(): View
+    public function index(string $tenant): View
     {
         Gate::authorize('viewAny', Project::class);
 
         $projects = Project::query()->latest()->get();
         $tenantId = app(TenantContext::class)->id();
+        $recentActivity = ActivityLog::query()
+            ->with('actor')
+            ->where('tenant_id', $tenantId)
+            ->latest()
+            ->limit(20)
+            ->get();
         $currentRole = auth()->user()?->tenants()->whereKey($tenantId)->first()?->pivot?->role;
         $currentRoleLabel = match ($currentRole) {
             'owner' => 'Owner',
@@ -24,17 +31,17 @@ class ProjectController extends Controller
             default => 'Member',
         };
 
-        return view('projects.index', compact('projects', 'currentRole', 'currentRoleLabel'));
+        return view('projects.index', compact('projects', 'recentActivity', 'currentRole', 'currentRoleLabel'));
     }
 
-    public function create(): View
+    public function create(string $tenant): View
     {
         Gate::authorize('create', Project::class);
 
         return view('projects.create');
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(Request $request, string $tenant): RedirectResponse
     {
         Gate::authorize('create', Project::class);
 
@@ -47,7 +54,7 @@ class ProjectController extends Controller
         return redirect('/projects');
     }
 
-    public function edit(string $project): View
+    public function edit(string $tenant, string $project): View
     {
         Gate::authorize('manage', Project::class);
 
@@ -56,7 +63,7 @@ class ProjectController extends Controller
         return view('projects.edit', compact('project'));
     }
 
-    public function update(Request $request, string $project): RedirectResponse
+    public function update(Request $request, string $tenant, string $project): RedirectResponse
     {
         Gate::authorize('manage', Project::class);
 
@@ -71,7 +78,7 @@ class ProjectController extends Controller
         return redirect('/projects');
     }
 
-    public function destroy(string $project): RedirectResponse
+    public function destroy(string $tenant, string $project): RedirectResponse
     {
         Gate::authorize('manage', Project::class);
 

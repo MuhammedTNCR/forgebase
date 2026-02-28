@@ -45,4 +45,24 @@
             <div class="px-5 py-8 text-sm text-slate-600">No projects yet.</div>
         @endforelse
     </div>
+
+    <div class="mt-8 overflow-hidden rounded-lg border border-slate-200 bg-white">
+        <div class="border-b border-slate-100 px-5 py-4">
+            <h2 class="text-sm font-semibold uppercase tracking-wide text-slate-600">Recent activity (last 20)</h2>
+        </div>
+        @forelse ($recentActivity as $entry)
+            <div class="flex items-center justify-between gap-4 border-b border-slate-100 px-5 py-4 last:border-b-0">
+                <div class="text-sm text-slate-900">
+                    <span class="font-semibold">{{ $entry->actor?->name ?? 'System' }}</span>
+                    <span class="text-slate-600">·</span>
+                    <span class="text-slate-700">{{ $entry->action }}</span>
+                </div>
+                <div class="text-xs text-slate-500">
+                    {{ $entry->created_at?->diffForHumans() }}
+                </div>
+            </div>
+        @empty
+            <div class="px-5 py-6 text-sm text-slate-600">No activity yet.</div>
+        @endforelse
+    </div>
 @endsection

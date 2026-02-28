@@ -16,6 +16,7 @@ It provides subdomain-based tenancy, strict tenant isolation, role-based authori
 - Role-based access control (owner, admin, member)
 - Central workspace switching
 - Tenant-safe CRUD example (Projects module)
+- Activity log (audit trail) for key actions
 - Docker-based local development
 - Fully tested core isolation logic
 
@@ -211,6 +212,25 @@ Permissions:
 - Member → Read-only
 
 This module demonstrates how to build tenant-safe features.
+
+---
+
+## 🧾 Activity Log (Audit Trail)
+
+Forgebase records important actions in `activity_logs`.
+
+Defaults (v1):
+
+- Project creation → `project.created`
+- Project updates → `project.updated` (includes `properties.changes` + `properties.before`)
+- Project deletion → `project.deleted`
+
+Action naming convention: `resource.action` (lowercase).
+
+Tenant behavior:
+
+- Tenant actions store `tenant_id`
+- Central actions store `tenant_id` as `null`
 
 ---
 
