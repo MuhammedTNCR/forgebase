@@ -57,7 +57,7 @@ Examples:
 ### 1. Clone & Start Containers
 
 ```bash
-git clone <your-repo>
+git clone git@github.com:MuhammedTNCR/forgebase.git
 cd forgebase
 
 docker compose up -d --build
