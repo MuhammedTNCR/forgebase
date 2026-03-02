@@ -13,26 +13,31 @@
         };
     @endphp
 
-    <div class="overflow-hidden rounded-lg border border-slate-200 bg-white">
-        @forelse ($tenants as $tenant)
-            <div class="flex items-center justify-between border-b border-slate-100 px-5 py-4 last:border-b-0">
-                <div>
-                    <p class="font-medium text-slate-900">{{ $tenant->name }}</p>
-                    <p class="text-sm text-slate-600">
-                        Role:
-                        <span class="rounded bg-slate-200 px-2 py-0.5 text-xs font-semibold uppercase tracking-wide text-slate-700">{{ $roleLabel($tenant->pivot->role ?? null) }}</span>
-                    </p>
+    <div class="panel">
+        <p class="section-title">Your workspaces</p>
+        <div class="list">
+            @forelse ($tenants as $tenant)
+                <div class="row">
+                    <div class="row-meta">
+                        <div class="text-base font-semibold">{{ $tenant->name }}</div>
+                        <div class="muted">
+                            Role:
+                            <span class="badge">{{ $roleLabel($tenant->pivot->role ?? null) }}</span>
+                        </div>
+                    </div>
+                    <div class="nav">
+                        <a href="{{ route('workspaces.team', $tenant) }}" class="btn btn-outline">Team</a>
+                        <form method="POST" action="{{ route('workspaces.select', $tenant) }}">
+                            @csrf
+                            <button type="submit" class="btn btn-primary">Open</button>
+                        </form>
+                    </div>
                 </div>
-                <div class="flex items-center gap-3">
-                    <a href="{{ route('workspaces.team', $tenant) }}" class="rounded border border-slate-200 px-4 py-2 text-sm font-medium text-slate-700 hover:text-slate-900">Team</a>
-                    <form method="POST" action="{{ route('workspaces.select', $tenant) }}">
-                        @csrf
-                        <button type="submit" class="rounded bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800">Open</button>
-                    </form>
+            @empty
+                <div class="row">
+                    <p class="muted">No workspaces available for your account.</p>
                 </div>
-            </div>
-        @empty
-            <div class="px-5 py-8 text-sm text-slate-600">No workspaces available for your account.</div>
-        @endforelse
+            @endforelse
+        </div>
     </div>
 @endsection

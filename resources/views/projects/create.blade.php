@@ -5,19 +5,21 @@
 @section('subheading', 'Add a new project to this workspace.')
 
 @section('content')
-    <form method="POST" action="/projects" class="space-y-4 rounded-lg border border-slate-200 bg-white p-6">
-        @csrf
-        <div>
-            <label for="name" class="mb-1 block text-sm font-medium text-slate-700">Name</label>
-            <input id="name" name="name" type="text" value="{{ old('name') }}" required class="w-full rounded border border-slate-300 px-3 py-2">
-            @error('name')
-                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-            @enderror
-        </div>
+    <div class="panel">
+        <form method="POST" action="{{ route('projects.store', ['tenant' => request()->route('tenant')]) }}" class="form">
+            @csrf
+            <div>
+                <label for="name">Name</label>
+                <input id="name" name="name" type="text" value="{{ old('name') }}" required>
+                @error('name')
+                    <p class="error">{{ $message }}</p>
+                @enderror
+            </div>
 
-        <div class="flex items-center gap-3">
-            <button type="submit" class="rounded bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800">Save</button>
-            <a href="/projects" class="rounded border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50">Cancel</a>
-        </div>
-    </form>
+            <div class="nav" style="justify-content: flex-start;">
+                <button type="submit" class="btn btn-primary">Save</button>
+                <a href="{{ route('projects.index', ['tenant' => request()->route('tenant')]) }}" class="btn btn-outline">Cancel</a>
+            </div>
+        </form>
+    </div>
 @endsection

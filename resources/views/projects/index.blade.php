@@ -4,65 +4,66 @@
 @section('heading', 'Projects')
 @section('subheading')
     Role:
-    <span class="rounded bg-slate-200 px-2 py-0.5 text-xs font-semibold uppercase tracking-wide text-slate-700">{{ $currentRoleLabel }}</span>
+    <span class="badge">{{ $currentRoleLabel }}</span>
 @endsection
 
 @section('content')
-    @php
-        $tenantParam = request()->route('tenant');
-    @endphp
+    <div class="panel" style="margin-bottom: 22px;">
+        <div class="nav" style="justify-content: flex-end; margin-bottom: 12px;">
+            @can('create', App\Models\Project::class)
+                <a href="{{ route('projects.create', ['tenant' => request()->route('tenant')]) }}" class="btn btn-primary">New Project</a>
+            @endcan
+        </div>
 
-    <div class="mb-4 flex items-center justify-end">
-        @can('create', App\Models\Project::class)
-            <a href="{{ route('projects.create', ['tenant' => $tenantParam]) }}" class="rounded bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800">New Project</a>
-        @endcan
+        @if ($currentRole === 'member')
+            <div class="status" style="border-color: rgba(246, 167, 35, 0.4); background: rgba(246, 167, 35, 0.12); color: var(--accent-strong);">
+                You have read-only access in this workspace.
+            </div>
+        @endif
+
+        <div class="list">
+            @forelse ($projects as $project)
+                <div class="row">
+                    <div class="row-meta">
+                        <div class="text-base font-semibold">{{ $project->name }}</div>
+                    </div>
+                    <div class="nav">
+                        @can('update', $project)
+                            <a href="{{ route('projects.edit', ['tenant' => request()->route('tenant'), 'project' => $project]) }}" class="btn btn-outline">Edit</a>
+                        @endcan
+                        @can('delete', $project)
+                            <form method="POST" action="{{ route('projects.destroy', ['tenant' => request()->route('tenant'), 'project' => $project]) }}">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn btn-danger">Delete</button>
+                            </form>
+                        @endcan
+                    </div>
+                </div>
+            @empty
+                <div class="row">
+                    <p class="muted">No projects yet.</p>
+                </div>
+            @endforelse
+        </div>
     </div>
 
-    @if ($currentRole === 'member')
-        <div class="mb-4 rounded-md border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
-            You have read-only access in this workspace.
+    <div class="panel">
+        <p class="section-title">Recent activity (last 20)</p>
+        <div class="list">
+            @forelse ($recentActivity as $entry)
+                <div class="row">
+                    <div class="row-meta">
+                        <div class="text-base font-semibold">{{ $entry->actor?->name ?? 'System' }}</div>
+                        <div class="muted">{{ $entry->action }}</div>
+                    </div>
+                    <div class="muted">{{ $entry->created_at?->diffForHumans() }}</div>
+                </div>
+            @empty
+                <div class="row">
+                    <p class="muted">No activity yet.</p>
+                </div>
+            @endforelse
         </div>
-    @endif
-
-    <div class="overflow-hidden rounded-lg border border-slate-200 bg-white">
-        @forelse ($projects as $project)
-            <div class="flex items-center justify-between border-b border-slate-100 px-5 py-4 last:border-b-0">
-                <div class="font-medium text-slate-900">{{ $project->name }}</div>
-                <div class="flex items-center gap-4 text-sm">
-                    @can('update', $project)
-                        <a href="{{ route('projects.edit', ['tenant' => $tenantParam, 'project' => $project]) }}" class="text-slate-700 hover:text-slate-900">Edit</a>
-                    @endcan
-                    @can('delete', $project)
-                        <form method="POST" action="{{ route('projects.destroy', ['tenant' => $tenantParam, 'project' => $project]) }}">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="text-red-600 hover:text-red-700">Delete</button>
-                        </form>
-                    @endcan
-                </div>
-            </div>
-        @empty
-            <div class="px-5 py-8 text-sm text-slate-600">No projects yet.</div>
-        @endforelse
-    </div>
-
-    <div class="mt-8 overflow-hidden rounded-lg border border-slate-200 bg-white">
-        <div class="border-b border-slate-100 px-5 py-4">
-            <h2 class="text-sm font-semibold uppercase tracking-wide text-slate-600">Recent activity (last 20)</h2>
-        </div>
-        @forelse ($recentActivity as $entry)
-            <div class="flex items-center justify-between gap-4 border-b border-slate-100 px-5 py-4 last:border-b-0">
-                <div class="text-sm text-slate-900">
-                    <span class="font-semibold">{{ $entry->actor?->name ?? 'System' }}</span>
-                    <span class="text-slate-600">·</span>
-                    <span class="text-slate-700">{{ $entry->action }}</span>
-                </div>
-                <div class="text-xs text-slate-500">
-                    {{ $entry->created_at?->diffForHumans() }}
-                </div>
-            </div>
-        @empty
-            <div class="px-5 py-6 text-sm text-slate-600">No activity yet.</div>
-        @endforelse
     </div>
 @endsection
