@@ -3,6 +3,13 @@ All notable changes to this project will be documented in this file.
 
 The format is based on Keep a Changelog, and this project adheres to Semantic Versioning.
 
+## [1.1.0] - 2026-03-02
+
+### Added
+- Email-based team invitations
+- Invitation acceptance flow with token validation
+- Activity log entries for invitations
+
 ## [1.0.1] - 2026-03-01
 
 ### Added

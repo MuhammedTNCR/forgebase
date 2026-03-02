@@ -19,8 +19,25 @@
 - Tenant-safe CRUD example (Projects module)
 - Activity log (audit trail) with diff tracking
 - Recent activity feed (last 20 actions)
+- Team invitations (email + accept link)
 - Docker-based local development
 - Fully tested core isolation logic
+
+---
+
+## 👥 Team Invitations
+
+Owners and Admins can invite users to a tenant via email.
+
+Invitation flow:
+
+1. Invite user with email + role
+2. Signed acceptance link sent via email
+3. User logs in and accepts invitation
+4. Membership is attached in `tenant_user` pivot
+5. Activity log records invite + acceptance
+
+Expired invitations are rejected.
 
 ---
 

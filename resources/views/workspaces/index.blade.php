@@ -23,10 +23,13 @@
                         <span class="rounded bg-slate-200 px-2 py-0.5 text-xs font-semibold uppercase tracking-wide text-slate-700">{{ $roleLabel($tenant->pivot->role ?? null) }}</span>
                     </p>
                 </div>
-                <form method="POST" action="{{ route('workspaces.select', $tenant) }}">
-                    @csrf
-                    <button type="submit" class="rounded bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800">Open</button>
-                </form>
+                <div class="flex items-center gap-3">
+                    <a href="{{ route('workspaces.team', $tenant) }}" class="rounded border border-slate-200 px-4 py-2 text-sm font-medium text-slate-700 hover:text-slate-900">Team</a>
+                    <form method="POST" action="{{ route('workspaces.select', $tenant) }}">
+                        @csrf
+                        <button type="submit" class="rounded bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800">Open</button>
+                    </form>
+                </div>
             </div>
         @empty
             <div class="px-5 py-8 text-sm text-slate-600">No workspaces available for your account.</div>

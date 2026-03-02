@@ -3,8 +3,10 @@
 namespace App\Providers;
 
 use App\Models\Project;
+use App\Models\Tenant;
 use App\Observers\ProjectObserver;
 use App\Policies\ProjectPolicy;
+use App\Policies\TeamPolicy;
 use App\Support\Activity\ActivityLogger;
 use App\Support\Tenancy\TenantContext;
 use Illuminate\Support\Facades\Gate;
@@ -27,6 +29,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Gate::policy(Project::class, ProjectPolicy::class);
+        Gate::policy(Tenant::class, TeamPolicy::class);
         Project::observe(ProjectObserver::class);
     }
 }
