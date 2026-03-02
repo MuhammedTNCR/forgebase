@@ -15,10 +15,6 @@
         };
     @endphp
 
-    @if (session('status'))
-        <div class="status">{{ session('status') }}</div>
-    @endif
-
     @can('invite', $tenant)
         <div class="panel" style="margin-bottom: 22px;">
             <p class="section-title">Invite someone</p>

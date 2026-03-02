@@ -247,20 +247,37 @@
                 </div>
                 @php
                     $tenantId = app(\App\Support\Tenancy\TenantContext::class)->id();
-                @endphp
-                @php
                     $tenantSlug = request()->route('tenant');
                 @endphp
-                @if ($tenantId && $tenantSlug && auth()->check())
-                    <div class="nav">
-                        <a class="btn btn-outline" href="{{ route('projects.index', ['tenant' => $tenantSlug]) }}">Projects</a>
-                        @if ($tenantId)
+                @if (auth()->check())
+                    @if ($tenantId && $tenantSlug)
+                        <div class="nav">
+                            <a class="btn btn-outline" href="/">Workspace</a>
+                            <a class="btn btn-outline" href="{{ route('projects.index', ['tenant' => $tenantSlug]) }}">Projects</a>
                             <a class="btn btn-outline" href="{{ route('workspaces.team', $tenantId) }}">Team</a>
-                        @endif
-                    </div>
+                            <form method="POST" action="{{ route('logout') }}">
+                                @csrf
+                                <button type="submit" class="btn btn-outline">Log out</button>
+                            </form>
+                        </div>
+                    @else
+                        <div class="nav">
+                            <a class="btn btn-outline" href="{{ route('dashboard') }}">Dashboard</a>
+                            <a class="btn btn-outline" href="{{ route('workspaces.index') }}">Workspaces</a>
+                            <a class="btn btn-outline" href="{{ route('profile.edit') }}">Profile</a>
+                            <form method="POST" action="{{ route('logout') }}">
+                                @csrf
+                                <button type="submit" class="btn btn-outline">Log out</button>
+                            </form>
+                        </div>
+                    @endif
                 @endif
             </div>
         </header>
+
+        @if (session('status'))
+            <div class="status">{{ session('status') }}</div>
+        @endif
 
         @yield('content')
     </main>

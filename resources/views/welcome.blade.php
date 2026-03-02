@@ -244,8 +244,17 @@
                 <div>{{ config('app.name', 'Forgebase') }}</div>
             </div>
             <div class="nav-actions">
-                <a class="btn btn-outline" href="{{ route('login') }}">Log in</a>
-                <a class="btn btn-primary" href="{{ route('register') }}">Get started</a>
+                @auth
+                    <a class="btn btn-outline" href="{{ route('dashboard') }}">Dashboard</a>
+                    <a class="btn btn-primary" href="{{ route('workspaces.index') }}">Workspaces</a>
+                    <form method="POST" action="{{ route('logout') }}">
+                        @csrf
+                        <button type="submit" class="btn btn-outline">Log out</button>
+                    </form>
+                @else
+                    <a class="btn btn-outline" href="{{ route('login') }}">Log in</a>
+                    <a class="btn btn-primary" href="{{ route('register') }}">Get started</a>
+                @endauth
             </div>
         </nav>
 
@@ -258,8 +267,13 @@
                     workspace switching, audit trails, and team invitations baked in.
                 </p>
                 <div class="hero-actions">
-                    <a class="btn btn-primary" href="{{ route('login') }}">Open your workspace</a>
-                    <a class="btn btn-outline" href="{{ route('workspaces.index') }}">View workspaces</a>
+                    @auth
+                        <a class="btn btn-primary" href="{{ route('workspaces.index') }}">Open your workspaces</a>
+                        <a class="btn btn-outline" href="{{ route('dashboard') }}">Go to dashboard</a>
+                    @else
+                        <a class="btn btn-primary" href="{{ route('login') }}">Open your workspace</a>
+                        <a class="btn btn-outline" href="{{ route('workspaces.index') }}">View workspaces</a>
+                    @endauth
                 </div>
             </div>
             <div class="panel fade-up float" style="animation-delay: 0.1s;">
