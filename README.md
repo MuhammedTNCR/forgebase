@@ -2,7 +2,7 @@
 
 > Multi-tenant SaaS foundation built with Laravel 12.
 
-- Latest release: **v1.0.1**
+- Latest release: **v1.1.0**
 - Release history: [CHANGELOG](CHANGELOG.md)
 
 ---
@@ -277,12 +277,12 @@ config/
 
 ## 📌 Version
 
-Current version: **v1.0.1**
+Current version: **v1.1.0**
 
-### v1.0.1
-- Added activity logging (audit trail)
-- Added recent activity feed
-- Minor documentation improvements
+### v1.1.0
+- Email-based team invitations
+- Invitation acceptance flow with token validation
+- Activity log entries for invitations
 
 ---
 
