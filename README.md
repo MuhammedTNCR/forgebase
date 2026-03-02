@@ -1,8 +1,9 @@
 # Forgebase
 
-Forgebase is a production-ready Laravel 12 multi-tenant starter kit built with a single-database, shared-table architecture.
+> Multi-tenant SaaS foundation built with Laravel 12.
 
-It provides subdomain-based tenancy, strict tenant isolation, role-based authorization, and a central workspace switching flow — designed for SaaS applications.
+- Latest release: **v1.0.1**
+- Release history: [CHANGELOG](CHANGELOG.md)
 
 ---
 
@@ -16,7 +17,8 @@ It provides subdomain-based tenancy, strict tenant isolation, role-based authori
 - Role-based access control (owner, admin, member)
 - Central workspace switching
 - Tenant-safe CRUD example (Projects module)
-- Activity log (audit trail) for key actions
+- Activity log (audit trail) with diff tracking
+- Recent activity feed (last 20 actions)
 - Docker-based local development
 - Fully tested core isolation logic
 
@@ -217,20 +219,23 @@ This module demonstrates how to build tenant-safe features.
 
 ## 🧾 Activity Log (Audit Trail)
 
-Forgebase records important actions in `activity_logs`.
+Forgebase records important domain actions in `activity_logs`.
 
-Defaults (v1):
+Currently logged events:
 
-- Project creation → `project.created`
-- Project updates → `project.updated` (includes `properties.changes` + `properties.before`)
-- Project deletion → `project.deleted`
+- `project.created`
+- `project.updated` (includes `properties.changes` + `properties.before`)
+- `project.deleted`
 
 Action naming convention: `resource.action` (lowercase).
 
+
 Tenant behavior:
 
-- Tenant actions store `tenant_id`
-- Central actions store `tenant_id` as `null`
+- Tenant-domain actions → `tenant_id` is set
+- Central-domain actions → `tenant_id = null`
+
+The Projects list view displays the most recent 20 activity entries.
 
 ---
 
@@ -255,16 +260,21 @@ config/
 
 ## 📌 Version
 
-Current version: **v1.0.0**
+Current version: **v1.0.1**
 
-Forgebase v1.0.0 includes:
-
-- Stable tenancy core
-- Workspace switching
-- Tenant-safe CRUD example
-- Production-ready isolation guarantees
+### v1.0.1
+- Added activity logging (audit trail)
+- Added recent activity feed
+- Minor documentation improvements
 
 ---
+
+## 🚧 Roadmap
+
+- Team invitations (email-based membership flow)
+- Plan-based feature gating
+- Domain events refinement (after-commit logging)
+- Production deployment guide
 
 ## 📄 License
 
