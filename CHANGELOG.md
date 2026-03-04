@@ -3,6 +3,13 @@ All notable changes to this project will be documented in this file.
 
 The format is based on Keep a Changelog, and this project adheres to Semantic Versioning.
 
+## [1.2.0] - 2026-03-04
+
+### Added
+- Plan-based feature gating (config-driven)
+- EnsureFeatureEnabled middleware for tenant routes
+- Tenant plan field with feature map resolution
+
 ## [1.1.0] - 2026-03-02
 
 ### Added
