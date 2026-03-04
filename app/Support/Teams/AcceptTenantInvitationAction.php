@@ -4,10 +4,11 @@ declare(strict_types=1);
 
 namespace App\Support\Teams;
 
+use App\Events\TenantInvitationAccepted;
 use App\Models\TenantInvitation;
 use App\Models\User;
-use App\Support\Activity\ActivityLogger;
 use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Support\Facades\DB;
 
 class AcceptTenantInvitationAction
 {
@@ -38,11 +39,13 @@ class AcceptTenantInvitationAction
             'accepted_by_user_id' => $user->id,
         ])->save();
 
-        app(ActivityLogger::class)->log('team.invite_accepted', null, [
-            'invited_email' => $invitation->email,
-            'role' => $invitation->role,
-            'invitation_id' => $invitation->id,
-        ], $user, $tenantId);
+        DB::afterCommit(function () use ($invitation, $user, $tenantId): void {
+            event(new TenantInvitationAccepted($invitation, $user, $tenantId, [
+                'invited_email' => $invitation->email,
+                'role' => $invitation->role,
+                'invitation_id' => $invitation->id,
+            ]));
+        });
 
         return $invitation;
     }

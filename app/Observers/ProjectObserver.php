@@ -5,14 +5,19 @@ declare(strict_types=1);
 namespace App\Observers;
 
 use App\Models\Project;
-use App\Support\Activity\ActivityLogger;
+use App\Events\ProjectCreated;
+use App\Events\ProjectDeleted;
+use App\Events\ProjectUpdated;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\DB;
 
 class ProjectObserver
 {
     public function created(Project $project): void
     {
-        app(ActivityLogger::class)->log('project.created', $project);
+        DB::afterCommit(function () use ($project): void {
+            event(new ProjectCreated($project, auth()->user(), $project->tenant_id));
+        });
     }
 
     public function updated(Project $project): void
@@ -28,14 +33,18 @@ class ProjectObserver
             $before[$key] = $project->getOriginal($key);
         }
 
-        app(ActivityLogger::class)->log('project.updated', $project, [
-            'changes' => $changes,
-            'before' => $before,
-        ]);
+        DB::afterCommit(function () use ($project, $changes, $before): void {
+            event(new ProjectUpdated($project, auth()->user(), $project->tenant_id, [
+                'changes' => $changes,
+                'before' => $before,
+            ]));
+        });
     }
 
     public function deleted(Project $project): void
     {
-        app(ActivityLogger::class)->log('project.deleted', $project);
+        DB::afterCommit(function () use ($project): void {
+            event(new ProjectDeleted($project, auth()->user(), $project->tenant_id));
+        });
     }
 }

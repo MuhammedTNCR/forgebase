@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\ActivityLog;
 use App\Models\Project;
+use App\Models\Tenant;
+use App\Models\ActivityLog;
 use App\Support\Tenancy\TenantContext;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 
 class ProjectController extends Controller
@@ -58,7 +60,13 @@ class ProjectController extends Controller
     {
         Gate::authorize('manage', Project::class);
 
-        $project = Project::query()->findOrFail($project);
+        $tenantId = app(TenantContext::class)->id()
+            ?? Tenant::query()->where('slug', $tenant)->value('id');
+
+        $project = Project::withoutGlobalScope('tenant')
+            ->whereKey($project)
+            ->where('tenant_id', $tenantId)
+            ->firstOrFail();
 
         return view('projects.edit', compact('project'));
     }
@@ -67,7 +75,13 @@ class ProjectController extends Controller
     {
         Gate::authorize('manage', Project::class);
 
-        $project = Project::query()->findOrFail($project);
+        $tenantId = app(TenantContext::class)->id()
+            ?? Tenant::query()->where('slug', $tenant)->value('id');
+
+        $project = Project::withoutGlobalScope('tenant')
+            ->whereKey($project)
+            ->where('tenant_id', $tenantId)
+            ->firstOrFail();
 
         $attributes = $request->validate([
             'name' => ['required', 'string', 'max:255'],
@@ -78,13 +92,32 @@ class ProjectController extends Controller
         return redirect('/projects');
     }
 
-    public function destroy(string $tenant, string $project): RedirectResponse
+    public function destroy(Request $request, string $tenant, string $project): RedirectResponse
     {
         Gate::authorize('manage', Project::class);
 
-        $project = Project::query()->findOrFail($project);
+        $tenantId = app(TenantContext::class)->id()
+            ?? Tenant::query()->where('slug', $tenant)->value('id');
 
-        $project->delete();
+        $row = DB::table('projects')
+            ->where('id', $project)
+            ->where('tenant_id', $tenantId)
+            ->first();
+
+        if (! $row) {
+            abort(404);
+        }
+
+        $projectModel = (new Project())->newFromBuilder((array) $row);
+
+        DB::table('projects')
+            ->where('id', $project)
+            ->where('tenant_id', $tenantId)
+            ->delete();
+
+        DB::afterCommit(function () use ($projectModel): void {
+            event(new \App\Events\ProjectDeleted($projectModel, auth()->user(), $projectModel->tenant_id));
+        });
 
         return redirect('/projects');
     }

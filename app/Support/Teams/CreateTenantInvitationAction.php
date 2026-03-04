@@ -4,12 +4,13 @@ declare(strict_types=1);
 
 namespace App\Support\Teams;
 
+use App\Events\TenantInvitationCreated;
 use App\Mail\TenantInvitationMail;
 use App\Models\Tenant;
 use App\Models\TenantInvitation;
 use App\Models\User;
-use App\Support\Activity\ActivityLogger;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class CreateTenantInvitationAction
@@ -32,11 +33,13 @@ class CreateTenantInvitationAction
 
             Mail::to($normalizedEmail)->send(new TenantInvitationMail($tenant, $existing, $inviter));
 
-            app(ActivityLogger::class)->log('team.invited', null, [
-                'invited_email' => $normalizedEmail,
-                'role' => $existing->role,
-                'invitation_id' => $existing->id,
-            ], $inviter, $tenant->id);
+            DB::afterCommit(function () use ($existing, $inviter, $tenant, $normalizedEmail): void {
+                event(new TenantInvitationCreated($existing, $inviter, $tenant->id, [
+                    'invited_email' => $normalizedEmail,
+                    'role' => $existing->role,
+                    'invitation_id' => $existing->id,
+                ]));
+            });
 
             return $existing;
         }
@@ -52,11 +55,13 @@ class CreateTenantInvitationAction
 
         Mail::to($normalizedEmail)->send(new TenantInvitationMail($tenant, $invitation, $inviter));
 
-        app(ActivityLogger::class)->log('team.invited', null, [
-            'invited_email' => $normalizedEmail,
-            'role' => $role,
-            'invitation_id' => $invitation->id,
-        ], $inviter, $tenant->id);
+        DB::afterCommit(function () use ($invitation, $inviter, $tenant, $normalizedEmail, $role): void {
+            event(new TenantInvitationCreated($invitation, $inviter, $tenant->id, [
+                'invited_email' => $normalizedEmail,
+                'role' => $role,
+                'invitation_id' => $invitation->id,
+            ]));
+        });
 
         return $invitation;
     }

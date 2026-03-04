@@ -10,6 +10,9 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 - EnsureFeatureEnabled middleware for tenant routes
 - Tenant plan field with feature map resolution
 
+### Changed
+- Activity logging refactored to domain events with after-commit execution
+
 ## [1.1.0] - 2026-03-02
 
 ### Added
