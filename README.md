@@ -2,7 +2,7 @@
 
 > Multi-tenant SaaS foundation built with Laravel 12.
 
-- Latest release: **v1.1.0**
+- Latest release: **v1.2.0**
 - Release history: [CHANGELOG](CHANGELOG.md)
 
 ---
@@ -308,12 +308,12 @@ config/
 
 ## 📌 Version
 
-Current version: **v1.1.0**
+Current version: **v1.2.0**
 
-### v1.1.0
-- Email-based team invitations
-- Invitation acceptance flow with token validation
-- Activity log entries for invitations
+### v1.2.0
+- Plan-based feature gating (config-driven)
+- EnsureFeatureEnabled middleware for tenant routes
+- Tenant plan field with feature map resolution
 
 ---
 
