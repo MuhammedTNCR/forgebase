@@ -21,11 +21,13 @@ class DatabaseSeeder extends Seeder
         $acme = Tenant::query()->create([
             'name' => 'Acme Inc.',
             'slug' => 'acme',
+            'plan' => 'pro',
         ]);
 
         $globex = Tenant::query()->create([
             'name' => 'Globex Corp.',
             'slug' => 'globex',
+            'plan' => 'free',
         ]);
 
         $owner = User::query()->create([

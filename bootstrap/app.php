@@ -18,7 +18,9 @@ return Application::configure(basePath: dirname(__DIR__))
         },
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        //
+        $middleware->alias([
+            'feature' => \App\Http\Middleware\EnsureFeatureEnabled::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

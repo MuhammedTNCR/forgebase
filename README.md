@@ -20,6 +20,7 @@
 - Activity log (audit trail) with diff tracking
 - Recent activity feed (last 20 actions)
 - Team invitations (email + accept link)
+- Plan-based feature gating (config-driven)
 - Docker-based local development
 - Fully tested core isolation logic
 
@@ -197,6 +198,36 @@ Forgebase guarantees:
 - Role restrictions are strictly enforced
 
 All critical behaviors are covered by feature tests.
+
+---
+
+## 🧭 Plan-Based Feature Gating
+
+Forgebase supports plan-aware feature flags driven entirely by configuration.
+
+- Configure feature access in `config/features.php`
+- Each tenant has a `plan` string (e.g., `free`, `pro`, `enterprise`)
+- Use the `feature` middleware to guard routes
+
+Example config:
+
+```php
+return [
+    'default_plan' => 'free',
+    'plans' => [
+        'free' => ['projects'],
+        'pro' => ['projects', 'activity_log', 'team_invites'],
+    ],
+];
+```
+
+Example route guard:
+
+```php
+Route::middleware(['auth', 'feature:team_invites'])->group(function () {
+    // ...
+});
+```
 
 ---
 

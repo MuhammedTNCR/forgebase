@@ -7,6 +7,6 @@ Route::get('/', function () {
     return view('workspaces.welcome');
 });
 
-Route::middleware('auth')->group(function (): void {
+Route::middleware(['auth', 'feature:projects'])->group(function (): void {
     Route::resource('projects', ProjectController::class)->except('show');
 });

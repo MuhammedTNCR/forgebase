@@ -31,10 +31,18 @@ Route::domain($centralDomain)->group(function (): void {
     Route::middleware('auth')->group(function (): void {
         Route::get('/workspaces', [WorkspaceController::class, 'index'])->name('workspaces.index');
         Route::post('/workspaces/{tenant}/select', [WorkspaceController::class, 'select'])->name('workspaces.select');
-        Route::get('/workspaces/{tenant}/team', [TeamController::class, 'index'])->name('workspaces.team');
-        Route::post('/workspaces/{tenant}/invitations', [TenantInvitationController::class, 'store'])->name('workspaces.invitations.store');
-        Route::post('/workspaces/{tenant}/invitations/{invitation}/resend', [TenantInvitationController::class, 'resend'])->name('workspaces.invitations.resend');
-        Route::delete('/workspaces/{tenant}/invitations/{invitation}', [TenantInvitationController::class, 'destroy'])->name('workspaces.invitations.destroy');
+        Route::get('/workspaces/{tenant}/team', [TeamController::class, 'index'])
+            ->middleware('feature:team_invites')
+            ->name('workspaces.team');
+        Route::post('/workspaces/{tenant}/invitations', [TenantInvitationController::class, 'store'])
+            ->middleware('feature:team_invites')
+            ->name('workspaces.invitations.store');
+        Route::post('/workspaces/{tenant}/invitations/{invitation}/resend', [TenantInvitationController::class, 'resend'])
+            ->middleware('feature:team_invites')
+            ->name('workspaces.invitations.resend');
+        Route::delete('/workspaces/{tenant}/invitations/{invitation}', [TenantInvitationController::class, 'destroy'])
+            ->middleware('feature:team_invites')
+            ->name('workspaces.invitations.destroy');
     });
 
     require __DIR__.'/auth.php';

@@ -32,6 +32,7 @@ class TenantInvitationTest extends TestCase
         $tenant = Tenant::query()->create([
             'name' => 'Acme',
             'slug' => 'acme',
+            'plan' => 'pro',
         ]);
 
         $owner = User::factory()->create();
@@ -62,6 +63,7 @@ class TenantInvitationTest extends TestCase
         $tenant = Tenant::query()->create([
             'name' => 'Acme',
             'slug' => 'acme',
+            'plan' => 'pro',
         ]);
 
         $member = User::factory()->create();
