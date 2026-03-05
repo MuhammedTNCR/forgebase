@@ -63,8 +63,7 @@ class ProjectController extends Controller
         $tenantId = app(TenantContext::class)->id()
             ?? Tenant::query()->where('slug', $tenant)->value('id');
 
-        $project = Project::withoutGlobalScope('tenant')
-            ->whereKey($project)
+        $project = Project::query()->whereKey($project)
             ->where('tenant_id', $tenantId)
             ->firstOrFail();
 
@@ -78,8 +77,7 @@ class ProjectController extends Controller
         $tenantId = app(TenantContext::class)->id()
             ?? Tenant::query()->where('slug', $tenant)->value('id');
 
-        $project = Project::withoutGlobalScope('tenant')
-            ->whereKey($project)
+        $project = Project::query()->whereKey($project)
             ->where('tenant_id', $tenantId)
             ->firstOrFail();
 
